@@ -1,0 +1,293 @@
+/* ==========================================================================
+   1. VARIABLES DE COLOR Y FUENTES (Para mantener consistencia)
+   ========================================================================== */
+:root {
+    --color-fondo: #f5f7fa;
+    --color-texto: #333333;
+    --color-primario: #2196F3; /* Azul profesional para acciones neutras */
+    --color-exito: #4CAF50;    /* Verde para vender/cobrar/guardar */
+    --color-peligro: #f44336;  /* Rojo para anular/borrar */
+    --color-alerta: #ff9800;   /* Naranja para editar/advertencias */
+    --color-tarjeta: #ffffff;
+    --borde: 1px solid #e0e0e0;
+    --sombra: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+/* ==========================================================================
+   2. REINICIO GENERAL (Para que todos los teléfonos lo vean igual)
+   ========================================================================== */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+body {
+    background-color: var(--color-fondo);
+    color: var(--color-texto);
+    padding: 15px;
+    max-width: 600px; /* Evita que se estire demasiado en tablets/PC */
+    margin: 0 auto;   /* Lo centra en pantallas grandes */
+    line-height: 1.5;
+}
+
+/* ==========================================================================
+   3. CABECERA Y NAVEGACIÓN
+   ========================================================================== */
+header {
+    background-color: var(--color-tarjeta);
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: var(--sombra);
+    text-align: center;
+    margin-bottom: 20px;
+}
+header h1 {
+    font-size: 1.5em;
+    color: var(--color-primario);
+    margin-bottom: 10px;
+}
+#tasa-cambio-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    background-color: #e3f2fd;
+    padding: 10px;
+    border-radius: 5px;
+}
+#tasaDelDia {
+    width: 80px;
+    padding: 8px;
+    font-weight: bold;
+    border: var(--borde);
+    border-radius: 4px;
+    text-align: center;
+}
+nav {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap; 
+    margin-bottom: 20px;
+}
+nav button {
+    flex: 1 1 30%; 
+    padding: 12px 5px;
+    font-size: 0.85em;
+    font-weight: bold;
+    border: none;
+    border-radius: 6px;
+    background-color: var(--color-tarjeta);
+    color: var(--color-texto);
+    box-shadow: var(--sombra);
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s;
+}
+nav button:active, nav button:hover, nav button.activo {
+    background-color: var(--color-primario);
+    color: white;
+    transform: scale(0.98);
+}
+#nav-semanal { background-color: #e3f2fd; color: #0d47a1; }
+#nav-fiados { background-color: #ffebee; color: #b71c1c; }
+#nav-opciones { background-color: #e0e0e0; color: #333; }
+
+/* ==========================================================================
+   4. ESTRUCTURA DE LAS PANTALLAS (Secciones/Tarjetas)
+   ========================================================================== */
+section {
+    background-color: var(--color-tarjeta);
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: var(--sombra);
+    margin-bottom: 20px;
+}
+section h2 {
+    font-size: 1.3em;
+    border-bottom: 2px solid var(--color-primario);
+    padding-bottom: 5px;
+    margin-bottom: 15px;
+}
+section h3 {
+    font-size: 1.1em;
+    margin-top: 15px;
+    margin-bottom: 10px;
+    color: #555;
+}
+
+/* ==========================================================================
+   5. FORMULARIOS (Inputs y Selects)
+   ========================================================================== */
+label {
+    font-weight: 600;
+    font-size: 0.9em;
+    color: #666;
+    display: inline-block;
+    margin-bottom: 3px;
+}
+input[type="text"],
+input[type="number"],
+select {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 10px;
+    border: var(--borde);
+    border-radius: 6px;
+    font-size: 1em;
+    background-color: #fff;
+    transition: border-color 0.2s;
+}
+input:focus, select:focus {
+    outline: none;
+    border-color: var(--color-primario);
+    box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.2);
+}
+div[style*="display: flex"] { gap: 10px; }
+
+/* ==========================================================================
+   6. BOTONES GENERALES
+   ========================================================================== */
+button {
+    font-weight: bold;
+    border-radius: 6px;
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.2s, opacity 0.2s;
+}
+button:active { opacity: 0.8; }
+
+#btnAgregarAlTicket, #btnGuardarProducto, #btnAgregarMarca, #btnActualizarTasa {
+    background-color: var(--color-primario);
+    color: white;
+    padding: 12px;
+}
+#btnRegistrarVenta, #btnCerrarSemana {
+    background-color: var(--color-exito);
+    color: white;
+    font-size: 1.2em;
+    box-shadow: 0 4px 6px rgba(76, 175, 80, 0.3);
+}
+
+/* ==========================================================================
+   7. LISTAS E HISTORIALES (Ticket, Resumen, Auditoría)
+   ========================================================================== */
+ul {
+    list-style-type: none;
+    padding-left: 0;
+}
+ul li {
+    background-color: var(--color-fondo);
+    padding: 12px;
+    margin-bottom: 8px;
+    border-radius: 6px;
+    border-left: 4px solid var(--color-primario);
+    display: flex;
+    flex-direction: column; 
+    justify-content: space-between;
+    gap: 5px;
+}
+#listaTicket li {
+    border-left-color: var(--color-exito);
+    flex-direction: row; 
+    align-items: center;
+}
+#totalTicketDolares { color: var(--color-exito); font-weight: bold; font-size: 1.2em;}
+#totalTicketBolivares { font-weight: bold; font-size: 1.1em;}
+
+#listaAuditoria li {
+    border-left-color: var(--color-alerta);
+    font-size: 0.85em;
+    padding: 8px;
+}
+
+/* ==========================================================================
+   8. TABLAS (Para el inventario Semanal)
+   ========================================================================== */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    background-color: var(--color-tarjeta);
+}
+th, td {
+    padding: 12px 8px;
+    text-align: left;
+    border-bottom: var(--borde);
+}
+th {
+    background-color: var(--color-fondo);
+    color: var(--color-primario);
+    font-weight: bold;
+}
+
+/* ==========================================================================
+   9. MEDIA QUERIES
+   ========================================================================== */
+@media (min-width: 480px) {
+    ul li {
+        flex-direction: row;
+        align-items: center;
+    }
+    ul li button {
+        margin-top: 0;
+        margin-left: auto;
+    }
+}
+
+/* ==========================================================================
+   10. UTILIDADES DE TARJETAS Y ALINEACIÓN (¡NUEVO SISTEMA ORDENADO!)
+   ========================================================================== */
+.venta-card {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+}
+.venta-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #eaeaea;
+    padding-bottom: 8px;
+    font-size: 0.85em;
+    color: #666;
+}
+.venta-body {
+    font-size: 0.95em;
+    color: #333;
+    line-height: 1.4;
+    padding: 4px 0;
+}
+.venta-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #f8f9fa;
+    padding: 10px 12px;
+    border-radius: 6px;
+    font-size: 0.95em;
+    border: 1px solid #f0f0f0;
+}
+.venta-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+    margin-top: 8px;
+}
+.badge {
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.75em;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    white-space: nowrap; /* Evita que el texto se rompa en dos líneas */
+    display: inline-block; /* Hace que la etiqueta no se deforme */
+}
+.badge-metodo { background: #e3f2fd; color: #0d47a1; border: 1px solid #bbdefb; }
+.badge-mixto { background: #ffebee; color: #c62828; border: 1px solid #ffcdd2; }
+.badge-fiado { background: #e8f5e9; color: #2e7d32; border: 1px solid #c8e6c9; }
+
+.btn-peligro { background-color: var(--color-peligro); color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-size: 0.85em; transition: 0.2s;}
+.btn-alerta { background-color: var(--color-alerta); color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-size: 0.85em; transition: 0.2s;}
+.btn-exito { background-color: var(--color-exito); color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-size: 0.85em; transition: 0.2s;}

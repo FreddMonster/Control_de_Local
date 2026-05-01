@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Sistema Local</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header style="margin-bottom: 20px;">
+        <h1>Control de Local</h1>
+        <div id="tasa-cambio-container">
+            <label for="tasaDelDia">Tasa de Hoy (Bs por $): </label>
+            <input type="number" id="tasaDelDia" value="650" step="0.01">
+            <button id="btnActualizarTasa">Fijar Tasa</button>
+        </div>
+    </header>
+
+    <nav style="display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 20px;">
+        <button id="nav-ventas" class="activo" style="padding: 10px; flex: 1;">Ventas</button>
+        <button id="nav-inventario" style="padding: 10px; flex: 1;">Inventario</button>
+        <button id="nav-resumen" style="padding: 10px; flex: 1; font-weight: bold;">Caja de Hoy</button>
+        <button id="nav-semanal" style="padding: 10px; flex: 1; background-color: #e3f2fd;">Semanal</button>
+        <button id="nav-fiados" style="padding: 10px; flex: 1; background-color: #ffebee;">Deudas</button>
+        <button id="nav-historial" style="padding: 10px; flex: 1;">Historial</button>
+        <button id="nav-opciones" style="padding: 10px; flex: 1; background-color: #e0e0e0; color: #333;">⚙️ Respaldo</button>
+    </nav>
+
+    <main>
+        <!-- PANTALLA 1: VENTAS -->
+        <section id="pantalla-ventas">
+            <h2>Punto de Venta</h2>
+            <div style="border: 1px solid #ccc; padding: 10px; margin-bottom: 15px; border-radius: 5px;">
+                <h3>1. Añadir al Ticket</h3>
+                <div style="display: flex; gap: 10px; align-items: flex-end; flex-wrap: wrap;">
+                    <div>
+                        <label for="selectProducto">Producto: </label><br>
+                        <select id="selectProducto"><option value="">-- Manual o Inventario --</option></select>
+                    </div>
+                    <div>
+                        <label for="cantidadProducto">Cantidad:</label><br>
+                        <input type="number" id="cantidadProducto" value="1" min="1" style="width: 70px;">
+                    </div>
+                </div>
+                <div id="monto-container" style="margin-top: 10px;">
+                    <div style="display: flex; gap: 10px;">
+                        <div>
+                            <label for="montoDolares">P. Unitario ($):</label><br>
+                            <input type="number" id="montoDolares" step="0.01">
+                        </div>
+                        <div>
+                            <label for="montoBolivares">P. Unitario (Bs):</label><br>
+                            <input type="number" id="montoBolivares" step="0.01">
+                        </div>
+                    </div>
+                </div>
+                <button id="btnAgregarAlTicket" style="margin-top: 15px; width: 100%; padding: 8px;">+ Añadir al Ticket</button>
+            </div>
+
+            <div style="background: #f4f4f4; padding: 10px; margin-bottom: 15px; border-radius: 5px;">
+                <h3>2. Ticket Actual</h3>
+                <ul id="listaTicket" style="min-height: 50px; padding-left: 20px;"></ul>
+                <h3 style="text-align: right;">Total: $<span id="totalTicketDolares">0.00</span> | <span id="totalTicketBolivares">0.00</span> Bs</h3>
+            </div>
+
+            <div style="border: 1px solid #ccc; padding: 10px; border-radius: 5px;">
+                <h3>3. Cobrar Ticket</h3>
+                <select id="metodoPago" style="width: 100%; margin-bottom: 10px;">
+                    <option value="efectivoBs">Efectivo (Bs)</option>
+                    <option value="efectivoDolares">Efectivo ($)</option>
+                    <option value="punto">Punto</option>
+                    <option value="pagoMovil">Pago Móvil</option>
+                    <option value="mixto">Mixto (Pago Parcial + Fiado)</option>
+                    <option value="fiado">Fiado Total (Cuenta por Cobrar)</option>
+                </select>
+
+                <div id="campo-cliente-fiador" style="display: none; margin-bottom: 10px;">
+                    <label for="nombreFiado">Nombre del Cliente (Deudor):</label><br>
+                    <input type="text" id="nombreFiado" style="width: 100%;">
+                </div>
+
+                <div id="campo-mixto" style="display: none; background: #fff3e0; padding: 10px; border-radius: 5px; margin-bottom: 10px;">
+                    <label>Monto Abonado HOY:</label><br>
+                    <div style="display: flex; gap: 10px; margin-bottom: 5px;">
+                        <div style="flex: 1;">
+                            <label style="font-size: 0.9em;">Dólares ($):</label>
+                            <input type="number" id="montoAbonadoMixtoDol" step="0.01" style="width: 100%;" placeholder="Ej: 2.50">
+                        </div>
+                        <div style="flex: 1;">
+                            <label style="font-size: 0.9em;">Bolívares (Bs):</label>
+                            <input type="number" id="montoAbonadoMixtoBs" step="0.01" style="width: 100%;" placeholder="Ej: 1625">
+                        </div>
+                    </div>
+                    <label>Método del Abono:</label><br>
+                    <select id="metodoAbonoMixto" style="width: 100%;">
+                        <option value="efectivoBs">Efectivo (Bs)</option>
+                        <option value="efectivoDolares">Efectivo ($)</option>
+                        <option value="punto">Punto</option>
+                        <option value="pagoMovil">Pago Móvil</option>
+                    </select>
+                </div>
+
+                <button id="btnRegistrarVenta" style="margin-top: 15px; width: 100%; padding: 15px; font-size: 1.2em; background: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer;">Confirmar Venta</button>
+            </div>
+        </section>
+
+        <!-- PANTALLA 2: INVENTARIO -->
+        <section id="pantalla-inventario" style="display: none;">
+            <h2>Gestión de Inventario</h2>
+            <div style="border: 1px solid #ccc; padding: 15px; margin-bottom: 15px; border-radius: 5px; background: #fafafa;">
+                <h3 style="margin-top: 0; border-bottom: none;">Gestión de Marcas</h3>
+                <label>Añadir Nueva:</label>
+                <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                    <input type="text" id="nuevaMarcaInput" placeholder="Ej: Polar" style="flex: 1; margin-bottom: 0;">
+                    <button id="btnAgregarMarca" style="padding: 10px 15px; white-space: nowrap;">Añadir</button>
+                </div>
+                <label>Eliminar Existente:</label>
+                <div style="display: flex; gap: 10px;">
+                    <select id="selectEliminarMarca" style="flex: 1; margin-bottom: 0;"></select>
+                    <button id="btnEliminarMarca" style="padding: 10px 15px; background-color: var(--color-peligro); color: white; white-space: nowrap;">Borrar</button>
+                </div>
+            </div>
+            
+            <div style="border: 1px solid #ccc; padding: 10px; margin-bottom: 15px; border-radius: 5px;">
+                <h3>Añadir / Editar Producto</h3>
+                <div style="display: flex; gap: 10px; margin-bottom: 5px;">
+                    <div style="flex: 1;"><label>Nombre:</label><br><input type="text" id="nuevoNombreProducto" style="width: 100%;"></div>
+                    <div style="flex: 1;"><label>Marca:</label><br><select id="selectMarcaProducto" style="width: 100%;"><option value="">-- Sin Marca --</option></select></div>
+                </div>
+                <div style="display: flex; gap: 10px; margin-bottom: 5px;">
+                    <div style="flex: 1;"><label>P. Base ($):</label><br><input type="number" id="nuevoPrecioDolares" step="0.01" style="width: 100%;"></div>
+                    <div style="flex: 1;"><label>P. Base (Bs):</label><br><input type="number" id="nuevoPrecioBolivares" step="0.01" style="width: 100%;"></div>
+                </div>
+                <label>Stock Físico Actual:</label><br>
+                <input type="number" id="nuevoStockInicial" style="width: 100%; margin-bottom: 10px;">
+                <button id="btnGuardarProducto" style="width: 100%; padding: 8px;">Guardar Producto</button>
+            </div>
+            <h3>Lista de Productos</h3>
+            <ul id="listaDeProductosHtml"></ul>
+        </section>
+
+        <!-- PANTALLA 3: RESUMEN DEL DÍA -->
+        <section id="pantalla-resumen" style="display: none;">
+            <h2>Caja de hoy</h2>
+            <p style="font-size: 0.8em; color: gray;">Muestra estrictamente los ingresos registrados el día de hoy.</p>
+            <div id="resumenTotales"></div>
+            <hr>
+            <h2>Fiados Nuevos (Solo Hoy)</h2>
+            <ul id="listaDeFiadosHoy"></ul>
+            <hr>
+            <h2>Últimas Ventas de Hoy</h2>
+            <ul id="listaHistorialCorto"></ul>
+        </section>
+
+        <!-- PANTALLA 4: CIERRE SEMANAL -->
+        <section id="pantalla-semanal" style="display: none;">
+            <h2>Cuadre de la Semana</h2>
+            <div id="resumenSemanalTotales" style="background: #e8f5e9; padding: 15px; border-radius: 5px; margin-bottom: 15px;"></div>
+            <h3>Auditoría de Inventario</h3>
+            <div style="overflow-x: auto;">
+                <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.9em;">
+                    <thead><tr style="border-bottom: 2px solid #333;"><th>Producto</th><th>Inicial</th><th>Vendidos</th><th>Deberían Quedar</th></tr></thead>
+                    <tbody id="tablaInventarioSemanal"></tbody>
+                </table>
+            </div>
+            <button id="btnCerrarSemana" style="margin-top: 20px; width: 100%; padding: 15px; font-size: 1.1em; background: #2196F3; color: white; border: none; border-radius: 5px; cursor: pointer;">✅ Hacer Cierre Semanal</button>
+        </section>
+
+        <!-- PANTALLA 5: GESTIÓN DE FIADOS -->
+        <section id="pantalla-fiados" style="display: none;">
+            <h2>Cuentas por Cobrar (Global)</h2>
+            <p style="font-size: 0.9em; color: gray;">Lista de todas las deudas activas. Si un cliente paga, regístralo aquí.</p>
+            
+            <div style="border: 1px solid #ffc107; padding: 10px; border-radius: 5px; margin-bottom: 15px; background: #fffdf5;">
+                <h3 style="margin-top: 0;">Total por cobrar en la calle: $<span id="totalFiadosGlobales">0.00</span></h3>
+            </div>
+            <ul id="listaTodosLosFiados" style="list-style: none; padding-left: 0;"></ul>
+        </section>
+
+        <!-- PANTALLA 6: HISTORIAL COMPLETO Y AUDITORÍA -->
+        <section id="pantalla-historial" style="display: none;">
+            <h2>Historial Completo de Ventas</h2>
+            
+            <div style="background: #e3f2fd; padding: 15px; border-radius: 5px; margin-bottom: 15px; border: 1px solid #bbdefb;">
+                <h3 style="margin-top: 0; color: #0d47a1; border: none;">🔍 Buscar Transacciones</h3>
+                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                    <div style="flex: 1; min-width: 130px;"><label>Día Exacto:</label><br><input type="date" id="filtroDia" style="margin-bottom: 5px;"></div>
+                    <div style="flex: 1; min-width: 130px;"><label>Por Mes:</label><br><input type="month" id="filtroMes" style="margin-bottom: 5px;"></div>
+                </div>
+                <div style="display: flex; gap: 10px; margin-top: 5px;">
+                    <button id="btnFiltrarHistorial" style="flex: 2; padding: 10px; background-color: var(--color-primario); color: white; border: none; border-radius: 5px;">Buscar</button>
+                    <button id="btnLimpiarFiltro" style="flex: 1; padding: 10px; background-color: #9e9e9e; color: white; border: none; border-radius: 5px;">Ver Todo</button>
+                </div>
+            </div>
+
+            <div id="editor-venta-container" style="display:none; border: 2px solid #f0ad4e; padding: 15px; margin-bottom: 15px; border-radius: 5px; background: #fffcf5;"></div>
+            
+            <p id="mensajeResultados" style="font-weight: bold; color: #555; margin-bottom: 10px; text-align: center;"></p>
+            <ul id="listaHistorialCompleto"></ul>
+            
+            <div id="controlesPaginacion" style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px; padding-top: 10px; border-top: 1px solid #ccc;">
+                <button id="btnPaginaAnterior" style="padding: 10px 15px; background: var(--color-primario); color: white; border: none; border-radius: 5px; cursor: pointer;">⬅️ Anterior</button>
+                <span id="textoPaginaActual" style="font-weight: bold; color: #333;">Página 1</span>
+                <button id="btnPaginaSiguiente" style="padding: 10px 15px; background: var(--color-primario); color: white; border: none; border-radius: 5px; cursor: pointer;">Siguiente ➡️</button>
+            </div>
+            
+            <hr style="margin-top: 35px; margin-bottom: 25px;">
+            
+            <h2>Registro de Auditoría (Cambios)</h2>
+            <p style="font-size: 0.9em; color: gray; margin-bottom: 15px;">Historial de modificaciones, anulaciones y cobros.</p>
+
+            <!-- SECCIÓN DE BÚSQUEDA PARA AUDITORÍA -->
+            <div style="background: #fff3e0; padding: 15px; border-radius: 5px; margin-bottom: 15px; border: 1px solid #ffe0b2;">
+                <h3 style="margin-top: 0; color: #e65100; border: none;">🔍 Buscar en Auditoría</h3>
+                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                    <div style="flex: 1; min-width: 130px;"><label>Día Exacto:</label><br><input type="date" id="filtroDiaAuditoria" style="margin-bottom: 5px;"></div>
+                    <div style="flex: 1; min-width: 130px;"><label>Por Mes:</label><br><input type="month" id="filtroMesAuditoria" style="margin-bottom: 5px;"></div>
+                </div>
+                <div style="display: flex; gap: 10px; margin-top: 5px;">
+                    <button id="btnFiltrarAuditoria" style="flex: 2; padding: 10px; background-color: var(--color-alerta); color: white; border: none; border-radius: 5px;">Buscar Cambios</button>
+                    <button id="btnLimpiarFiltroAuditoria" style="flex: 1; padding: 10px; background-color: #9e9e9e; color: white; border: none; border-radius: 5px;">Ver Todo</button>
+                </div>
+            </div>
+
+            <p id="mensajeResultadosAuditoria" style="font-weight: bold; color: #555; margin-bottom: 10px; text-align: center;"></p>
+            <ul id="listaAuditoria" style="font-size: 0.9em; border-left: 3px solid var(--color-alerta); padding-left: 15px;"></ul>
+
+            <!-- CONTROLES DE PAGINACIÓN PARA AUDITORÍA -->
+            <div id="controlesPaginacionAuditoria" style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px; padding-top: 10px; border-top: 1px solid #ccc;">
+                <button id="btnPaginaAnteriorAuditoria" style="padding: 10px 15px; background: var(--color-alerta); color: white; border: none; border-radius: 5px; cursor: pointer;">⬅️ Anterior</button>
+                <span id="textoPaginaActualAuditoria" style="font-weight: bold; color: #333;">Página 1</span>
+                <button id="btnPaginaSiguienteAuditoria" style="padding: 10px 15px; background: var(--color-alerta); color: white; border: none; border-radius: 5px; cursor: pointer;">Siguiente ➡️</button>
+            </div>
+        </section>
+
+        <!-- PANTALLA 7: OPCIONES AUXILIARES (RESPALDO) -->
+        <section id="pantalla-opciones" style="display: none;">
+            <h2>Respaldo y Seguridad de Datos</h2>
+            <p style="font-size: 0.9em; color: gray;">Utiliza estas herramientas para guardar o enviar los datos a otro teléfono.</p>
+            <div style="border: 1px solid #2196F3; padding: 15px; margin-bottom: 20px; border-radius: 5px; background: #e3f2fd;">
+                <h3 style="margin-top: 0;">1. Exportar Datos (Crear Copia)</h3>
+                <p style="font-size: 0.9em;">Genera un archivo con todo el inventario, ventas y fiados hasta este momento.</p>
+                <button id="btnExportarDatos" style="width: 100%; padding: 12px; background: #2196F3; color: white; border: none; border-radius: 5px; font-weight: bold; cursor: pointer;">💾 Descargar Archivo de Respaldo</button>
+            </div>
+            <div style="border: 1px solid #f44336; padding: 15px; border-radius: 5px; background: #ffebee;">
+                <h3 style="margin-top: 0;">2. Importar Datos (Cargar Copia)</h3>
+                <p style="font-size: 0.9em; color: #d32f2f;"><strong>¡ADVERTENCIA!</strong> Cargar un archivo sobreescribirá todos los datos actuales del teléfono.</p>
+                <input type="file" id="inputImportarArchivo" accept=".json" style="width: 100%; margin-bottom: 10px; padding: 5px; border: 1px solid #ccc; background: white;">
+                <button id="btnImportarDatos" style="width: 100%; padding: 12px; background: #f44336; color: white; border: none; border-radius: 5px; font-weight: bold; cursor: pointer;">📂 Cargar Archivo</button>
+            </div>
+        </section>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
